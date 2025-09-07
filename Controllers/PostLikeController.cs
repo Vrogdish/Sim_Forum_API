@@ -20,28 +20,34 @@ namespace Sim_Forum.Controllers
 
         // POST: api/PostLike/5
         [HttpPost("{postId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LikePost(int postId)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var success = await _likeService.LikeAsync(postId, userId);
-            if (!success) return BadRequest(new ErrorResponseDto { message = "Post already liked" });
-            return Ok();
+
+            if (!success)
+                return BadRequest(new ErrorResponseDto { message = "Post already liked" });
+
+            return Ok(new { success = true, message = "Post liked successfully" });
         }
 
         // DELETE: api/PostLike/5
         [HttpDelete("{postId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UnlikePost(int postId)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var success = await _likeService.UnlikeAsync(postId, userId);
-            if (!success) return NotFound(new ErrorResponseDto { message = "Like not found" });
-            return NoContent();
+
+            if (!success)
+                return NotFound(new ErrorResponseDto { message = "Like not found" });
+
+            return Ok(new { success = true, message = "Post unliked successfully" });
         }
 
         // GET: api/PostLike/5/count

@@ -38,7 +38,7 @@ namespace Sim_Forum.Controllers
             try
             {
                 var postTag = await _postTagService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetTagsByPost), new { postId = dto.PostId }, postTag);
+                return Ok(postTag); // Retourne directement l'objet créé
             }
             catch (InvalidOperationException ex)
             {
@@ -48,7 +48,7 @@ namespace Sim_Forum.Controllers
 
         // DELETE: api/PostTag/post/5/tag/2
         [HttpDelete("post/{postId}/tag/{tagId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeletePostTag(int postId, int tagId)
@@ -56,7 +56,7 @@ namespace Sim_Forum.Controllers
             var success = await _postTagService.DeleteAsync(postId, tagId);
             if (!success) return NotFound(new ErrorResponseDto { message = "PostTag not found." });
 
-            return NoContent();
+            return Ok(new { success = true, message = "PostTag deleted successfully." });
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class UpdateUserDto
     {
-        public string? Username { get; set; }
         public string? AvatarUrl { get; set; }
+        public string? Signature { get; set; }
     }
 }

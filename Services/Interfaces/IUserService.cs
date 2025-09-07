@@ -8,5 +8,7 @@ namespace Sim_Forum.Services.Interfaces
         Task<UserDto?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(int id, UpdateUserDto dto);
         Task<bool> DeleteAsync(int id);
+
+
     }
 }

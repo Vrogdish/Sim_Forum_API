@@ -50,25 +50,28 @@ namespace Sim_Forum.Controllers
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(AttachmentDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateAttachment(int id, UpdateAttachmentDto dto)
         {
             var success = await _attachmentService.UpdateAsync(id, dto);
             if (!success) return NotFound();
-            return NoContent();
+
+            var updatedAttachment = await _attachmentService.GetByIdAsync(id);
+            return Ok(updatedAttachment);
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAttachment(int id)
         {
             var success = await _attachmentService.DeleteAsync(id);
-            if (!success) return NotFound();
-            return NoContent();
+            if (!success) return NotFound(new ErrorResponseDto { message = "Attachment not found." });
+
+            return Ok(new { success = true, message = "Attachment deleted successfully." });
         }
     }
 }

@@ -56,7 +56,7 @@ namespace Sim_Forum.Controllers
 
         // PUT: api/Thread/5
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ThreadDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateThread(int id, UpdateThreadDto dto)
@@ -65,21 +65,24 @@ namespace Sim_Forum.Controllers
 
             var success = await _threadService.UpdateAsync(id, dto);
             if (!success) return NotFound();
-            return NoContent();
+
+            var updatedThread = await _threadService.GetByIdAsync(id);
+            return Ok(updatedThread);
         }
 
         // DELETE: api/Thread/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteThread(int id)
         {
-            if (!await CanAccessThread(id)) return Forbid();
 
             var success = await _threadService.DeleteAsync(id);
             if (!success) return NotFound();
-            return NoContent();
+
+            return Ok(new { success = true, message = "Thread deleted successfully." });
         }
 
         // Vérifie si l'utilisateur peut modifier/supprimer un thread (propriétaire ou admin)

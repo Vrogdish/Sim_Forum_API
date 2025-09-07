@@ -19,6 +19,7 @@ namespace Sim_Forum.Controllers
         }
 
         // GET: api/Tag
+        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TagDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
@@ -29,6 +30,7 @@ namespace Sim_Forum.Controllers
         }
 
         // GET: api/Tag/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
@@ -55,7 +57,7 @@ namespace Sim_Forum.Controllers
         // PUT: api/Tag/5
         [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
@@ -63,13 +65,15 @@ namespace Sim_Forum.Controllers
         {
             var success = await _tagService.UpdateAsync(id, dto);
             if (!success) return NotFound();
-            return NoContent();
+
+            var updatedTag = await _tagService.GetByIdAsync(id);
+            return Ok(updatedTag);
         }
 
         // DELETE: api/Tag/5
         [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
@@ -77,7 +81,7 @@ namespace Sim_Forum.Controllers
         {
             var success = await _tagService.DeleteAsync(id);
             if (!success) return NotFound();
-            return NoContent();
+            return Ok(new { success = true, message = "Tag deleted successfully." });
         }
     }
 }

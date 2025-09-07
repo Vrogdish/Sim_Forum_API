@@ -41,7 +41,6 @@ namespace Sim_Forum.Controllers
             return Ok(post);
         }
 
-        
         [HttpPost]
         [ProducesResponseType(typeof(PostDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
@@ -52,9 +51,8 @@ namespace Sim_Forum.Controllers
             return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
         }
 
-        
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(PostDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
@@ -66,12 +64,13 @@ namespace Sim_Forum.Controllers
 
             var success = await _postService.UpdateAsync(id, dto, userId);
             if (!success) return NotFound();
-            return NoContent();
+
+            var updatedPost = await _postService.GetByIdAsync(id);
+            return Ok(updatedPost);
         }
 
-        
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
@@ -82,8 +81,9 @@ namespace Sim_Forum.Controllers
             if (!await CanAccessPost(id, userId)) return Forbid();
 
             var success = await _postService.DeleteAsync(id, userId);
-            if (!success) return NotFound();
-            return NoContent();
+            if (!success) return NotFound(new ErrorResponseDto { message = "Post not found" });
+
+            return Ok(new { success = true, message = "Post deleted successfully." });
         }
 
         // Vérifie si l'utilisateur est propriétaire ou admin

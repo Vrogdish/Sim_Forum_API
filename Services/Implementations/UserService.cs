@@ -24,6 +24,7 @@ namespace Sim_Forum.Services.Implementations
                     Email = u.Email,
                     Role = u.Role,
                     AvatarUrl = u.AvatarUrl,
+                    Signature = u.Signature,
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt
                 })
@@ -42,6 +43,7 @@ namespace Sim_Forum.Services.Implementations
                 Email = user.Email,
                 Role = user.Role,
                 AvatarUrl = user.AvatarUrl,
+                Signature = user.Signature,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };
@@ -52,10 +54,11 @@ namespace Sim_Forum.Services.Implementations
             var user = await _context.Users.FindAsync(id);
             if (user == null) return false;
 
-            if (!string.IsNullOrEmpty(dto.Username))
-                user.Username = dto.Username;
             if (!string.IsNullOrEmpty(dto.AvatarUrl))
                 user.AvatarUrl = dto.AvatarUrl;
+
+            if (!string.IsNullOrEmpty(dto.Signature))
+                user.Signature = dto.Signature;
 
             user.UpdatedAt = DateTime.UtcNow;
 

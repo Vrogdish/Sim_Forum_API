@@ -33,6 +33,7 @@ namespace Sim_Forum.Controllers
 
         // GET: api/User/5
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
@@ -46,35 +47,33 @@ namespace Sim_Forum.Controllers
         }
 
         // PUT: api/User/5
-        [HttpPut("{id}")]
+        [HttpPut("me")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateUser(int id, UpdateUserDto dto)
+        public async Task<IActionResult> UpdateUser(UpdateUserDto dto)
         {
-            if (!CanAccessUser(id))
-                return Forbid();
-
-            var success = await _userService.UpdateAsync(id, dto);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var success = await _userService.UpdateAsync(userId, dto);
             if (!success) return NotFound();
 
-            return NoContent();
+            var updatedUser = await _userService.GetByIdAsync(userId);
+
+            return Ok(updatedUser);
         }
 
         // DELETE: api/User/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpDelete("me")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser()
         {
-            if (!CanAccessUser(id))
-                return Forbid();
-
-            var success = await _userService.DeleteAsync(id);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var success = await _userService.DeleteAsync(userId);
             if (!success) return NotFound();
 
-            return NoContent();
+            return Ok(new { success = true, message = "User deleted successfully." });
         }
 
         [HttpGet("me")]
@@ -82,7 +81,6 @@ namespace Sim_Forum.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<UserDto>> GetMe()
         {
-            // Récupère l'ID de l'utilisateur depuis le token
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await _userService.GetByIdAsync(userId);
             if (user == null) return NotFound();
@@ -90,12 +88,21 @@ namespace Sim_Forum.Controllers
             return Ok(user);
         }
 
-        private bool CanAccessUser(int id)
+        // DELETE pour un admin
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteUserByAdmin(int id)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var isAdmin = User.IsInRole("admin");
-            return isAdmin || userId == id;
+            var success = await _userService.DeleteAsync(id);
+            if (!success) return NotFound();
+
+            return Ok(new { success = true, message = "User deleted successfully." });
         }
+
 
     }
 }

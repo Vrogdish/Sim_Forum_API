@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sim_Forum.Models
 {
@@ -6,8 +7,10 @@ namespace Sim_Forum.Models
     {
         public int Id { get; set; }
 
+        [MaxLength(255)]
         public string FileName { get; set; } = null!;
 
+        [MaxLength(255)]
         public string FileUrl { get; set; } = null!;
 
         public int PostId { get; set; }

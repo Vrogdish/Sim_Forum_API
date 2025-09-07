@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Hosting;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sim_Forum.Models
 {
     public class Thread
     {
         public int Id { get; set; }
+
+        [MaxLength(200)]
         public string Title { get; set; } = null!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

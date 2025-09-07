@@ -20,7 +20,8 @@ namespace Sim_Forum.Data
                     Email = "cedric@forum.com",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("password_cedric"),
                     Role = "admin",
-                    AvatarUrl = "/images/default-avatar.png",
+                    AvatarUrl = "/default-avatar.png",
+                    Signature = "Administrateur du forum",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 },
@@ -30,7 +31,8 @@ namespace Sim_Forum.Data
                     Email = "john@forum.com",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("password_john"),
                     Role = "user",
-                    AvatarUrl = "/images/default-avatar.png",
+                    AvatarUrl = "/default-avatar.png",
+                    Signature = "Membre passionné",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 }
