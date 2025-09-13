@@ -53,7 +53,7 @@ namespace Sim_Forum.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateUser(UpdateUserDto dto)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var success = await _userService.UpdateAsync(userId, dto);
             if (!success) return NotFound();
 
@@ -69,7 +69,7 @@ namespace Sim_Forum.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUser()
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var success = await _userService.DeleteAsync(userId);
             if (!success) return NotFound();
 
@@ -81,7 +81,7 @@ namespace Sim_Forum.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<UserDto>> GetMe()
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var user = await _userService.GetByIdAsync(userId);
             if (user == null) return NotFound();
 
@@ -103,6 +103,104 @@ namespace Sim_Forum.Controllers
             return Ok(new { success = true, message = "User deleted successfully." });
         }
 
+        // POST: api/User/avatar
+        [HttpPost("me/avatar")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!); 
 
+            var userDto = await _userService.UploadAvatarAsync(userId, file);
+            if (userDto == null)
+                return NotFound("Utilisateur introuvable ou fichier invalide.");
+
+            return Ok(userDto);
+        }
+
+        // POST: api/user/{id}/avatar
+        [HttpPost("{id}/avatar")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UploadAvatarByAdmin(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Aucun fichier envoyé.");
+
+            var userDto = await _userService.UploadAvatarAsync(id, file);
+            if (userDto == null)
+                return NotFound("Utilisateur introuvable ou fichier invalide.");
+
+            return Ok(userDto);
+        }
+
+        [HttpPost("me/change-password")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var success = await _userService.ChangePasswordAsync(userId, dto.CurrentPassword, dto.NewPassword);
+            if (!success)
+            {
+                return BadRequest(new ErrorResponseDto
+                {
+                    statusCode = 400,
+                    message = "Mot de passe actuel incorrect."
+                });
+            }
+
+            return Ok(new { success = true, message = "Mot de passe changé avec succés" });
+        }
+
+        [Authorize (Roles = "admin")]
+        [HttpPost("{id}/change-password")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword(int id, ChangePasswordDto dto)
+        {
+            var success = await _userService.AdminResetPasswordAsync(id, dto.NewPassword);
+            if (!success)
+            {
+                return BadRequest(new ErrorResponseDto
+                {
+                    statusCode = 400,
+                    message = "Erreur lors du changement de mot de passe."
+                });
+            }
+            return Ok(new { success = true, message = "Mot de passe changé avec succés" });
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto),StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
+        {
+            var success = await _userService.SendPasswordResetTokenAsync(dto.Email);
+            if (!success) return BadRequest("Utilisateur non trouvé.");
+            return Ok(new { success = true });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto),StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+        {
+            var success = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword);
+            if (!success)
+            {
+                return BadRequest(new { success = false, message = "Invalid or expired token." });
+            }
+
+            return Ok(new { success = true, message = "Password reset successfully." });
+        }
     }
 }

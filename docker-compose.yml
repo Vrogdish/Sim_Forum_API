@@ -25,6 +25,10 @@ services:
       - db
     ports:
       - "5146:5146"
+    volumes :
+      - ./uploads:/app/uploads
+    
 
 volumes:
   forum_data:
+  forum_uploads:

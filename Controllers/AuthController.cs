@@ -19,12 +19,7 @@ namespace Sim_Forum.Controllers
             _authService = authService;
         }
 
-        /// <summary>
-        /// Enregistre un nouvel utilisateur.
-        /// </summary>
-        /// <param name="dto">Données d'inscription (email, username, mot de passe).</param>
-        /// <response code="200">Utilisateur créé avec succès.</response>
-        /// <response code="400">Email déjà utilisé.</response>
+  
         [AllowAnonymous]
         [HttpPost("register")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
@@ -43,12 +38,6 @@ namespace Sim_Forum.Controllers
             return Ok(userDto);
         }
 
-        /// <summary>
-        /// Authentifie un utilisateur et retourne un token JWT.
-        /// </summary>
-        /// <param name="dto">Identifiants de connexion (email, mot de passe).</param>
-        /// <response code="200">Connexion réussie, retourne un token JWT.</response>
-        /// <response code="401">Identifiants invalides.</response>
         [AllowAnonymous]
         [HttpPost("login")]
         [ProducesResponseType(typeof(TokenResponseDto), StatusCodes.Status200OK)]

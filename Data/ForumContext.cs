@@ -18,6 +18,8 @@ namespace Sim_Forum.Data
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<PostTag> PostTags { get; set; }
+        public DbSet<PasswordReset> PasswordResets { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

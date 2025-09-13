@@ -24,10 +24,10 @@ namespace Sim_Forum.Services.Implementations
         public async Task<User?> RegisterAsync(RegisterDto dto)
         {
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                throw new ApplicationException("email already exists");
+                throw new ApplicationException("l'email existe dejà");
 
             if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
-                throw new ApplicationException("username already exists");
+                throw new ApplicationException("l'utilisateur existe déjà");
 
             var user = new User
             {
@@ -35,7 +35,7 @@ namespace Sim_Forum.Services.Implementations
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Role = "user",
-                AvatarUrl = "/images/default-avatar.png",
+                AvatarUrl = "/uploads/avatars/default-avatar.png",
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
