@@ -151,7 +151,7 @@ namespace Sim_Forum.Services.Implementations
         public async Task<bool> SendPasswordResetTokenAsync(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null) return false;
+            if (user == null) throw new InvalidOperationException("Utilisateur introuvable");
 
             var token = Guid.NewGuid().ToString("N"); // token unique
             var expiresAt = DateTime.UtcNow.AddHours(1);
@@ -164,7 +164,7 @@ namespace Sim_Forum.Services.Implementations
             });
             await _context.SaveChangesAsync();
 
-            var resetLink = $"https://tonapp.com/reset-password?token={token}";
+            var resetLink = $"https://simforum.com/reset-password?token={token}";
 
             // Envoi email (via ton service SMTP ou SendGrid)
             await _emailService.SendAsync(user.Email,

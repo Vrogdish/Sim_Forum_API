@@ -184,7 +184,6 @@ namespace Sim_Forum.Controllers
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
         {
             var success = await _userService.SendPasswordResetTokenAsync(dto.Email);
-            if (!success) return BadRequest("Utilisateur non trouvé.");
             return Ok(new { success = true });
         }
 

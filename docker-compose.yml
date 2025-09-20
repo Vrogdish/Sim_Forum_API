@@ -11,6 +11,8 @@ services:
       - forum_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    env_file:
+      - .env
 
   api:
     build: .
@@ -27,6 +29,9 @@ services:
       - "5146:5146"
     volumes :
       - ./uploads:/app/uploads
+    env_file:
+      - .env
+  
     
 
 volumes:

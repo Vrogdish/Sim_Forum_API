@@ -27,6 +27,15 @@ namespace Sim_Forum.Controllers
             return Ok(categories);
         }
 
+        [HttpGet("with-threads")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(IEnumerable<CategoryWithThreadsDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<CategoryWithThreadsDto>>> GetCategoriesWithThreads([FromQuery] int limit = 5)
+        {
+            var categories = await _categoryService.GetWithThreadsAsync(limit);
+            return Ok(categories);
+        }
+
         [HttpGet("{id}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
@@ -38,6 +47,20 @@ namespace Sim_Forum.Controllers
                 return NotFound(new ErrorResponseDto { message = "Category not found" });
             return Ok(category);
         }
+
+        [HttpGet("{name}")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CategoryDto>> GetCategoryByName(string name)
+        {
+            var category = await _categoryService.GetByNameAsync(name);
+            if (category == null)
+                return NotFound(new ErrorResponseDto { message = "Category not found" });
+            return Ok(category);
+        }
+
+
 
         [HttpPost]
         [Authorize(Roles = "admin")]

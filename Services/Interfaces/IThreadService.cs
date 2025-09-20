@@ -4,7 +4,7 @@ namespace Sim_Forum.Services.Interfaces
 {
     public interface IThreadService
     {
-        Task<IEnumerable<ThreadDto>> GetAllAsync();
+        Task<IEnumerable<ThreadDto>> GetByCategoryIdAsync(int categoryId);
         Task<ThreadDto?> GetByIdAsync(int id);
         Task<ThreadDto> CreateAsync(CreateThreadDto dto, int userId);
         Task<bool> UpdateAsync(int id, UpdateThreadDto dto);

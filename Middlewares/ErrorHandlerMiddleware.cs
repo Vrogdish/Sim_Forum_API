@@ -75,6 +75,10 @@ namespace Sim_Forum.Middlewares
                     status = HttpStatusCode.BadRequest;
                     message = exception.Message;
                     break;
+                 case InvalidOperationException:
+                    status = HttpStatusCode.BadRequest;
+                    message = exception.Message;
+                    break;
                 default:
                     status = HttpStatusCode.InternalServerError;
                     message = "Une erreur est survenue.";

@@ -16,15 +16,21 @@ namespace Sim_Forum.Services.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<ThreadDto>> GetAllAsync()
+        public async Task<IEnumerable<ThreadDto>> GetByCategoryIdAsync(int categoryId)
         {
             return await _context.Threads
+                .Where(t => t.CategoryId == categoryId)
+                .Include(t => t.Category)
+                .Include(t => t.User)
+                .OrderByDescending(t => t.CreatedAt)
                 .Select(t => new ThreadDto
                 {
                     Id = t.Id,
                     Title = t.Title,
                     CategoryId = t.CategoryId,
+                    CategoryName = t.Category != null ? t.Category.Name : string.Empty,
                     UserId = t.UserId,
+                    Username = t.User != null ? t.User.Username : string.Empty,
                     CreatedAt = t.CreatedAt
                 })
                 .ToListAsync();

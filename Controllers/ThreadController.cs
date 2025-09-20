@@ -19,14 +19,13 @@ namespace Sim_Forum.Controllers
             _threadService = threadService;
         }
 
-        // GET: api/Thread
+        // GET: api/Thread/category/5
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("category/{categoryId}")]
         [ProducesResponseType(typeof(IEnumerable<ThreadDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<IEnumerable<ThreadDto>>> GetThreads()
+        public async Task<ActionResult<IEnumerable<ThreadDto>>> GetThreadsByCategory(int categoryId)
         {
-            var threads = await _threadService.GetAllAsync();
+            var threads = await _threadService.GetByCategoryIdAsync(categoryId);
             return Ok(threads);
         }
 
