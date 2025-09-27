@@ -36,7 +36,7 @@ namespace Sim_Forum.Controllers
             return Ok(categories);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
@@ -48,13 +48,13 @@ namespace Sim_Forum.Controllers
             return Ok(category);
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("{slug}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CategoryDto>> GetCategoryByName(string name)
+        public async Task<ActionResult<CategoryDto>> GetCategoryBySlug(string slug)
         {
-            var category = await _categoryService.GetByNameAsync(name);
+            var category = await _categoryService.GetBySlugAsync(slug);
             if (category == null)
                 return NotFound(new ErrorResponseDto { message = "Category not found" });
             return Ok(category);

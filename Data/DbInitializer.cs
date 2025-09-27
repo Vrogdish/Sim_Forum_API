@@ -49,9 +49,9 @@ namespace Sim_Forum.Data
             {
                 var categories = new List<Category>
             {
-                new Category { Name = "Général", Description = "Discussions générales" },
-                new Category { Name = "Aide", Description = "Questions et support" },
-                new Category { Name = "Développement", Description = "Code, projets, astuces" }
+                new Category { Name = "Général", Description = "Discussions générales",Slug = "general"  },
+                new Category { Name = "Aide", Description = "Questions et support",Slug="aide" },
+                new Category { Name = "Développement", Description = "Code, projets, astuces",Slug="developpement" }
             };
                 context.Categories.AddRange(categories);
                 context.SaveChanges();

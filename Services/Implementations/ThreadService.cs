@@ -31,6 +31,7 @@ namespace Sim_Forum.Services.Implementations
                     CategoryName = t.Category != null ? t.Category.Name : string.Empty,
                     UserId = t.UserId,
                     Username = t.User != null ? t.User.Username : string.Empty,
+                    TotalPosts = t.Posts.Count,
                     CreatedAt = t.CreatedAt
                 })
                 .ToListAsync();
@@ -46,7 +47,10 @@ namespace Sim_Forum.Services.Implementations
                 Id = thread.Id,
                 Title = thread.Title,
                 CategoryId = thread.CategoryId,
+                CategoryName = thread.Category != null ? thread.Category.Name : string.Empty,
                 UserId = thread.UserId,
+                Username = thread.User != null ? thread.User.Username : string.Empty,
+                TotalPosts = thread.Posts.Count,
                 CreatedAt = thread.CreatedAt
             };
         }
@@ -69,7 +73,10 @@ namespace Sim_Forum.Services.Implementations
                 Id = thread.Id,
                 Title = thread.Title,
                 CategoryId = thread.CategoryId,
+                CategoryName = thread.Category != null ? thread.Category.Name : string.Empty,
                 UserId = thread.UserId,
+                Username = thread.User != null ? thread.User.Username : string.Empty,
+                TotalPosts = 1,
                 CreatedAt = thread.CreatedAt
             };
         }

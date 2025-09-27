@@ -81,6 +81,10 @@ namespace Sim_Forum.Data
                 .HasForeignKey(t => t.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => c.Slug)
+                .IsUnique();
+
             modelBuilder.Entity<Post>()
                 .HasMany(p => p.Attachments)
                 .WithOne(a => a.Post)

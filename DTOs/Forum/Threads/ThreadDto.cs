@@ -8,6 +8,7 @@
         public string CategoryName { get; set; } = null!;
         public int UserId { get; set; }
         public string Username { get; set; } = null!;
+        public int TotalPosts { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

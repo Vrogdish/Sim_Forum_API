@@ -11,6 +11,8 @@ namespace Sim_Forum.Models
 
         public string Description { get; set; } = null!;
 
+        public string Slug { get; set; } = null!;
+
         public ICollection<Thread> Threads { get; set; } = null!;
     }
 }

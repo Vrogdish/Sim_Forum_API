@@ -23,6 +23,7 @@ namespace Sim_Forum.Services.Implementations
                 {
                     Id = c.Id,
                     Name = c.Name,
+                    Slug = c.Slug,
                     Description = c.Description
                 })
                 .ToListAsync();
@@ -34,6 +35,7 @@ namespace Sim_Forum.Services.Implementations
                 {
                     Id = c.Id,
                     Name = c.Name,
+                    Slug = c.Slug,
                     Description = c.Description,
                     TotalThreads = c.Threads.Count, 
                     Threads = c.Threads
@@ -44,6 +46,8 @@ namespace Sim_Forum.Services.Implementations
                             Id = t.Id,
                             Title = t.Title,
                             UserId = t.UserId,
+                            CategoryId = t.CategoryId,
+                            CategoryName = c.Name,
                             Username = t.User.Username,
                             CreatedAt = t.CreatedAt
                         })
@@ -62,19 +66,21 @@ namespace Sim_Forum.Services.Implementations
             {
                 Id = category.Id,
                 Name = category.Name,
+                Slug = category.Slug,
                 Description = category.Description
             };
         }
 
-        public async Task<CategoryDto?> GetByNameAsync(string name)
+        public async Task<CategoryDto?> GetBySlugAsync(string slug)
         {
             var category = await _context.Categories
-                .FirstOrDefaultAsync(c => c.Name == name);
+                .FirstOrDefaultAsync(c => c.Slug == slug);
             if (category == null) return null;
             return new CategoryDto
             {
                 Id = category.Id,
                 Name = category.Name,
+                Slug = category.Slug,
                 Description = category.Description
             };
         }
@@ -84,6 +90,7 @@ namespace Sim_Forum.Services.Implementations
             var category = new Category
             {
                 Name = dto.Name,
+                Slug = dto.Slug,
                 Description = dto.Description
             };
 
@@ -94,6 +101,7 @@ namespace Sim_Forum.Services.Implementations
             {
                 Id = category.Id,
                 Name = category.Name,
+                Slug = category.Slug,
                 Description = category.Description
             };
         }
@@ -104,6 +112,7 @@ namespace Sim_Forum.Services.Implementations
             if (category == null) return false;
 
             category.Name = dto.Name;
+            category.Slug = dto.Slug;
             category.Description = dto.Description;
             await _context.SaveChangesAsync();
             return true;
